@@ -83,7 +83,7 @@
 			DaneAutot = new Array;
 			var posy:uint = ObszarAutot.height / 2;
 			var posx:uint = posy; //ObszarAutot.width / 2;
-			ObszarAutot.setPixel32(posx, posy, 0x5508ffff);//To samo wpisane, ale nie koniecznie to samo zapamiętane!!!
+			ObszarAutot.setPixel32(posx, posy, 0x5508ffff);//To samo wpisane co do Array, ale nie koniecznie to samo zapamiętane!!!
 			
 			var pos:uint = posx + (posy * ObszarAutot.width);
 			DaneAutot[pos] = 0x5508ffff;	trace('!!![', posx, ',', posy, ']=', pos);
@@ -99,10 +99,10 @@
 			DaneHetero = new Array();//Prawdziwe dane heterotrofów
 			posy = ObszarHetero.height / 2 + 2;
 			posx = posy; // Obszar.width / 2;
-			ObszarHetero.setPixel32(posx, posy, 0x77ff08ff);//To samo wpisane, ale nie koniecznie to samo zapamiętane!!!
+			ObszarHetero.setPixel32(posx, posy, 0x77AA08ff);//To samo wpisane, ale nie koniecznie to samo zapamiętane!!!
 			
 			pos = posx + (posy * ObszarHetero.width);
-			DaneHetero[pos] = 0x77ff08ff;	trace('???[', posx, ',', posy, ']=', pos);
+			DaneHetero[pos] = 0x77AA08ff;	trace('???[', posx, ',', posy, ']=', pos);
 			
 			WyswieHetero = new Bitmap(ObszarHetero);
 			WyswieHetero.x = 0;
@@ -148,7 +148,7 @@
 		{
 			var pom:uint = (8 - Bits[genypot.b]);//blue to maska obrony - tym lepsza im mniej bitów
 			if (pom == 8) //za dobra - nikt nie może nic uszczknąć
-			   pom = 256;//Blokująca kara za taką maskę
+			   pom = 512;//Blokująca kara za taką maskę
 			else
 				pom *= pom;//Kwadrat kosztów obrony - nie więcej niż 7*7
 			pom = pom + (Bits[genypot.g] * Bits[genypot.g]) / 2;//Za chlorofil nie więcej niż 32	
@@ -157,9 +157,9 @@
 		
 		private static function MozeMutuj(parent:uint):uint
 		{
-			var gens:uint = parent;//Geny do ewentualnego zmutowania
-			var poz:uint = Math.random() * 200*10;//Nie częściej niż co dziesiąty możę mutować. Albo lepiej rzadziej
-			if (poz > 19) //Nie ma mutacji.
+			var gens:uint = /*0x00ffffff &*/ parent;//Geny do ewentualnego zmutowania
+			var poz:uint = Math.random() * 240*10;//Nie częściej niż co dziesiąty możę mutować. Albo lepiej rzadziej
+			if (poz > 23) //Nie ma mutacji.
 			{
 				return gens;
 			}
@@ -175,8 +175,8 @@
 		
 		private static function MozeMutujHetero(parent:uint):uint
 		{
-			var gens:uint = 0x00ffffff & parent;//Geny do ewentualnego zmutowania
-			var poz:uint = Math.random() * 240*10;//Nie częściej niż co dziesiąty możę mutować. Albo lepiej rzadziej
+			var gens:uint = /*0x00ffffff &*/ parent;//Geny do ewentualnego zmutowania
+			var poz:uint = Math.random() * 240*5;//Zwierzeta mają mniejsze populacje - muszą częściej mutować. 
 			if (poz > 23) //Nie ma mutacji.
 			{
 				return gens;
@@ -197,8 +197,8 @@
 			//		trace('foto: e=', en.toString(16), ' ch=', ch.toString(16), ' lht=', lht.toString(16));
 			if (en > 255)
 					return 255;
-			var pom:Number =//(255.0 - Math.abs(ch - lht)) / 512.0;//
-							(ch / 255.0) * (lht / 255.0);
+			var pom:Number =(255.0 - Math.abs((255-ch) - lht)) / 255;//
+							//(ch / 255.0) * (lht / 255.0);
 			pom = 1 + pom;
 			pom = en * pom;
 			if (pom > 255) return 255;
@@ -262,10 +262,10 @@
 					var uposazenie:uint;
 					var light_f:uint = Srodowisko.getPixel32(ox , oy ); //Tu chyba można bo chodzi o sam kanał alfa
 					var light_s:uint = Srodowisko.getPixel32(nx , ny ); 
-					//light_f = (light_f >> 24) & 0xff;//Extract alpha channel as light factor
-					//light_s = (light_s >> 24) & 0xff;
-					light_f = (Number(oy) / Height) * 255;
-					light_s = (Number(ny) / Height) * 255;
+					light_f = (light_f >> 24) & 0xff;//Extract alpha channel as light factor
+					light_s = (light_s >> 24) & 0xff;
+					//light_f = (Number(oy) / Height) * 255;
+					//light_s = (Number(ny) / Height) * 255;
 											//trace(light_f.toString(16), ' ', light_s.toString(16));
 					firstRGB.toRGB(first); 
 					seconRGB.toRGB(second);
@@ -276,7 +276,7 @@
 						firstRGB.a = fotosynteza(firstRGB.a,firstRGB.g, light_f);//Green as chlorophyl factor
 						//potomek.toRGB(first);
 						potomek.toRGB(MozeMutuj(firstRGB.toColor()));
-						uposazenie = firstRGB.r + 2; //Ile energii ma dostać potomek
+						uposazenie = (firstRGB.r & 0x0000003f) + 2; //Ile energii ma dostać potomek - 6 bitów
 						potomek.a = uposazenie; //Bezposrednie uposażanie potomka
 						uposazenie+=LiczKosztPotomka(potomek);//Koszty budowy potomka
 																
@@ -307,7 +307,7 @@
 						seconRGB.a = fotosynteza(seconRGB.a,seconRGB.g, light_s);//Green as chlorophyl factor
 						//potomek.toRGB(first);
 						potomek.toRGB(MozeMutuj(seconRGB.toColor()));
-						uposazenie = seconRGB.r + 2; //Ile energii ma dostać potomek
+						uposazenie = (firstRGB.r & 0x0000003f) + 2; //Ile energii ma dostać potomek - 6 bitów
 						potomek.a = uposazenie; //Bezposrednie uposażanie potomka
 						uposazenie+=LiczKosztPotomka(potomek);//Koszty budowy potomka
 																
@@ -331,7 +331,7 @@
 						firstRGB.a = fotosynteza(firstRGB.a, firstRGB.g, light_f);//Green as chlorophyl factor
 						seconRGB.a = fotosynteza(seconRGB.a, seconRGB.g, light_s);//Green as chlorophyl factor
 						
-						if (firstRGB.a == seconRGB.a || firstRGB.a < 235 || seconRGB.a < 235) 		
+						if (firstRGB.a == seconRGB.a || firstRGB.a < 245 || seconRGB.a < 245) 		
 						{
 							//Jak słabe lub równe to pierwszy próbuje dalekiego wysiewu
 							var r:Number = 5 + Math.random() * Math.random() * Math.random() * Math.random() * (Height / 2);
@@ -344,7 +344,7 @@
 							var mpos:uint =  mx + my * Width;
 							
 							potomek.toRGB(MozeMutuj(firstRGB.toColor()));
-							uposazenie = firstRGB.r + 2; //Ile energii ma dostać potomek
+							uposazenie = (firstRGB.r & 0x0000003f) + 2; //Ile energii ma dostać potomek - 6 bitów
 							potomek.a = uposazenie; //Bezposrednie uposażanie potomka
 							uposazenie+=LiczKosztPotomka(potomek);//Koszty budowy potomka
 																
@@ -360,13 +360,13 @@
 						{
 							if (firstRGB.a > seconRGB.a)
 							{
-								firstRGB.a = firstRGB.a*0.9;//Koszt ataku 20%
-								seconRGB.a = seconRGB.a*0.5;//Straty po ataku 50%
+								firstRGB.a = firstRGB.a*0.95;//Koszt ataku 
+								seconRGB.a = seconRGB.a*0.75;//Straty po ataku 
 							}
 							else
 							{
-								firstRGB.a = firstRGB.a*0.5;//Straty po ataku 50%
-								seconRGB.a = seconRGB.a*0.9;//Koszt ataku 20%
+								firstRGB.a = firstRGB.a*0.75;//Straty po ataku 
+								seconRGB.a = seconRGB.a*0.95;//Koszt ataku 
 							}
 						}
 						
@@ -459,11 +459,13 @@
 						Eksp/*:Number*/ = Number(firstRGB.r & seconRGB.b) / Number(firstRGB.r) *
 										  Number(firstRGB.r & seconRGB.b) / Number(seconRGB.b);
 						Eksp *= seconRGB.a;
+						Eksp *= 2;//Premia za bycie drapieżnikiem, żeby było ciekawiej
 						Zjadl += Eksp;
 						firstRGB.a += Eksp;//... reszta energii jest tracona, choć mogłaby może zasilać autotrofy
 						
 						DaneHetero[npos] = firstRGB.toColor32();//Przeniesienie na miejsce po ofierze
 						ObszarHetero.setPixel32(nx, ny, firstRGB.toColor32());//Wizualizacja
+						
 						DaneHetero[opos] = 0; //Stare miejsce jest teraz puste
 						ObszarHetero.setPixel32(ox, oy, 0);//Co tu widać
 						
@@ -479,7 +481,7 @@
 				{
 					//trace('pusta');
 					if (Zjadl > (1+firstRGB.g * Math.random()) )
-					{ //Zostaje i próbuje się rozmnażać 
+					{ //Zostaje gdzie jest i próbuje się rozmnażać 
 						firstRGB.a = firstRGB.a * 0.997;//Koszty metaboliczne
 						uposazenie = LiczKosztPotomka(firstRGB);//Liczy koszty bez mutacji
 						if ((uposazenie+firstRGB.a * 0.1) < firstRGB.a) //Stać go na potomka wraz z energia na poczatek
@@ -532,6 +534,7 @@
 		//Wizualne powolne sprzątanie po symulacji, aż będzie można uruchomić ponownie
 		{	
 			Wyswietlacz.alpha -= 0.02;
+			WyswieHetero.alpha -= 0.02;
 					
 			if (Wyswietlacz.alpha<=0)
 			{

@@ -22,6 +22,9 @@
 		//1280x720 - YouTube 16:9
 		public const Default_width:uint = 720;//Muszą być zgodne z ustawieniami w projekcie
 		public const Default_height:uint = 576;//Bo sprite.with i sprite.height zwraca użyte rozmiary a nie calkowite
+		//public const Default_width:uint = 800;//Muszą być zgodne z ustawieniami w projekcie
+		//public const Default_height:uint = 600;//Bo sprite.with i sprite.height zwraca użyte rozmiary a nie calkowite
+		
 		public var Klatka:uint=0;//Licznik klatek
 		
 		//Scenki czyli różne modele. Powinien być Vector<Scenka> ale nie mogę znaleźć dokumentacji do niego

@@ -11,7 +11,7 @@
 	 * Model 3: "Lepiej mieć najlepsze miejsce (Abcd)"
 	 * @author WBorkowski
 	 */
-	public class ModelTrzeci extends Scenka
+	public class ModelCzwarty extends Scenka
 	{
 		//Rozmiary inicjalne muszą być zapamiętane bo width i height zmienia się przy zmianie skali
 		public var IniWidth:Number = 0;
@@ -20,7 +20,7 @@
 		private var Obszar:BitmapData;
 		private var Wyswietlacz:Bitmap;
 		
-		public function ModelTrzeci(iwidth:Number,iheight:Number,ititle:String="Model #3 Abdcd") 
+		public function ModelCzwarty(iwidth:Number,iheight:Number,ititle:String="Model #3 A w zmiennym środowisku") 
 		{
 			super(iwidth, iheight, ititle);
 			IniWidth = iwidth;
@@ -60,11 +60,12 @@
 										   [3, 5, 7], [5, 7, 11], [7, 11, 13], [11, 13, 17],
 										   [3, 7, 11], [5 , 11, 13], [7, 13, 17], [11, 17, 19],
 										   [3, 7, 13], [5 , 11, 17], [7, 13, 19], [11, 17, 23]];
+										   
+		private var wspi:uint=Math.random() * 4;
 		
-		private function FillBackground():void
+		private function FillBackground(TimeOffset:Number):void
 		{
-			var wspi:uint = Math.random() * 6;//Wspolczynniki.length;
-			trace(wspi,': ',Wspolczynniki[wspi]);
+			trace(TimeOffset,wspi,': ',Wspolczynniki[wspi]);
 			
 			var pom:RGBColor = new RGBColor(0);
 			pom.a = 255;
@@ -72,8 +73,8 @@
 			for (var i:uint = 0; i < Obszar.height; i++)
 				for (var j:uint = 0; j < Obszar.width; j++)
 				{
-					var y:Number = i / Number(Obszar.height);
-					var x:Number = j / Number(Obszar.width);
+					var y:Number = i / Number(Obszar.height)+TimeOffset;
+					var x:Number = j / Number(Obszar.width)+TimeOffset;
 					//pom.g = 100 + 100 * Math.sin(-x * Math.PI * Wspolczynniki[wspi][0]);
 					//pom.g = 100 + 100 * Math.sin((x + y)/2 * Math.PI * Wspolczynniki[wspi][0]);
 					pom.g = 128 + 127 * (Math.sin((x - y) * Math.PI * Wspolczynniki[wspi][0]));
@@ -103,18 +104,21 @@
 			MeanColor.b /= lx;			
 		}
 		
+		private var Step:uint = 0;//Licznik kroków - potrzebny dla zmian tła
+		
 		private function Initialise():void
 		//Inicjalizacja musi być tak zrobiona, żeby można było ją ponownie użyć, jak symulacja się zakończy!
 		{
 			Obszar = new BitmapData(IniWidth, IniHeight/2,true, 0xffffff);
 			Obszar.fillRect(Obszar.rect, 0xFF000000);//		BitmapDataChannel.ALPHA
-			FillBackground();
+			FillBackground(0);//Start time
+			Step = 0;
 			Wyswietlacz = new Bitmap(Obszar);
 			Wyswietlacz.x = 0;
 			Wyswietlacz.y = IniHeight / 2;
 			addChild(Wyswietlacz);
 			
-						
+			/*			
 			const Rz:uint = 10; //w ilu rzędach
 			const BegYpos:Number = IniHeight - IniHeight/2.5;//Najdalsze możliwe slupki
 			const OdlegloscPionowa:Number = (IniHeight - 10 - BegYpos) / Rz;
@@ -167,19 +171,21 @@
 				for (j = 0; j < slupki.length; j++)
 					Slupek(slupki[j]).visible = true;
 			}
+			*/
 			
 			Title.alpha = 1;
 			addChild(Title);
 			
 			//Gotowe, można uruchamiać symulowanie
-			addEventListener(Event.ENTER_FRAME, SimulationStep,false,-10);
+			addEventListener(Event.ENTER_FRAME, SimulationStep);
 		}
 		
 		private function SimulationStep(e:Event):void
 		//Wykonuje kroki symulacji tak dlugo jak się da, a potem podmienia na zakończenie (AfterLastStep)
 		//Generalnie słupki rosną w tym samym tempie, ale te co wcześniej zaczęły przyrastają bardziej.
 		{
-			var bedzie_koniec:Boolean = false;
+			Step++;//Odliczenie numeru kroku
+			FillBackground((Step % 600)/600);//Pełny cykl trwa minutę * N
 			Title.alpha *= 0.95;
 			
 			for (var i:uint = 0; i < slupki.length; i++)
@@ -203,7 +209,7 @@
 					}
 				}
 				
-				if(bedzie_koniec)
+				if(Step>600)
 				{
 					trace(Title.text, ' successed');
 					removeEventListener(Event.ENTER_FRAME, SimulationStep);

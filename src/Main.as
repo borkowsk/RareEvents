@@ -60,6 +60,7 @@
 			Model1.Title.textColor = 0x00ffff;
 			Model1.x = 3;
 			Model1.y = 3;
+			Model1.Sleepable = true;
 			addChild(Model1);
 			
 			Scenka.BackGradientType = GradientType.RADIAL;
@@ -68,31 +69,34 @@
 			Model2.x = SWidth+3;
 			Model2.y = 3;
 			//Model2.KeepRatio = true;
+			Model2.Sleepable = true;
 			addChild(Model2);
 			
 			Scenka.BackColors = [0xFFFFFF, 0x0000FF];//Kolorki inne niż domyślne
 			Model3 = new ModelTrzeci(SWidth-6,SHeight-6,'A:=A*b*c*d czyli "Najlepieć być farciażem"');
 			Model3.x = 3;
-			Model3.y = SHeight+3;
+			Model3.y = SHeight + 3;
+			Model3.Sleepable = true;
 			addChild(Model3);
 			
-			Model4 = new Scenka(SWidth-6,SHeight-6,"Model 4");
+			Model4 = new ModelCzwarty(SWidth-6,SHeight-6,'Zmienne środowisko czyli "chwytaj okazję"');
 			Model4.x = SWidth+3;
 			Model4.y = SHeight+3;
 			addChild(Model4);
 			
 			Scenka.BackColors = [0x005588, 0x0000AA];//Kolorki inne niż domyślne
 			Scenka.BackRatios = [127,255];
-			Model5 = new ModelEvol1(SWidth - 6, SHeight - 6, 'Mikroewolucja czyli "Lepiej miec lepsze geny"');
+			Model5 = new ModelEvol1(SWidth - 6, SHeight - 6, 'Mikroewolucja - "wygrywają lepsze pomysły"');
 			Model5.Title.textColor = 0x999999;
 			Model5.x = 3;
 			Model5.y = 2 * SHeight + 3;
 			//Model5.KeepRatio = true;
 			addChild(Model5);
 			
-			Model6 = new Scenka(SWidth-6,SHeight-6,"Model 6");
+			Model6 = new Scenka(SWidth-6,SHeight-6,'Makroewolucja - ""');
 			Model6.x = SWidth+3;
-			Model6.y = 2*SHeight+3;
+			Model6.y = 2 * SHeight + 3;
+			Model6.KeepRatio = true;
 			addChild(Model6);
 			
 			//Testowa zawartość

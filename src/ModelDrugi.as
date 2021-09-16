@@ -121,7 +121,7 @@
 			addChild(Title);
 			
 			//Gotowe, można uruchamiać symulowanie
-			addEventListener(Event.ENTER_FRAME, SimulationStep);
+			addEventListener(Event.ENTER_FRAME, SimulationStep,false,-10);
 		}
 		
 		private function SimulationStep(e:Event):void

@@ -109,7 +109,8 @@
 			addChild(Title);
 			
 			//Gotowe, można uruchamiać symulowanie
-			addEventListener(Event.ENTER_FRAME, SimulationStep);
+			addEventListener(Event.ENTER_FRAME, SimulationStep,false,-10);
+			SaveOnEnterFrame = SimulationStep;
 		}
 		
 		private function SimulationStep(e:Event):void
@@ -142,8 +143,10 @@
 				if(bedzie_koniec)
 				{
 					//trace(Title.text, ' successed');
+					SaveOnEnterFrame = null;
 					removeEventListener(Event.ENTER_FRAME, SimulationStep);
 					addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
+					SaveOnEnterFrame = AfterLastStep;
 				}
 		}
 		
@@ -163,6 +166,7 @@
 					
 			if (bedzie_koniec)
 			{
+				SaveOnEnterFrame = null;
 				removeEventListener(Event.ENTER_FRAME, AfterLastStep);//Chwilowo nie ma czego robić w nowej klatce
 				for (var j:uint = 0; j < slupki.length; j++)
 					removeChild(Slupek(slupki[j])); //Usuwa slupki z listy wyświetlania scenki

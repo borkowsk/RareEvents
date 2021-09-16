@@ -24,7 +24,7 @@
 		static public var BorderColor:uint = 0x0099FF;//Kolor brzegowej ramki
 		static public var BackGradientType:String = GradientType.RADIAL/*RADIAL or LINEAR*/;//Typ gradientu wypełnienia
 		static public var BackSpreadMethod:String = SpreadMethod.REFLECT;//Sposób powtarzania gradientu
-		static public var BackColors:Array = [0x00AAFF, 0x0055FF];//Koloru budujące gradient
+		static public var BackColors:Array = [0xAAAAFF, 0x5555AA];//Koloru budujące gradient
 		static public var BackRatios:Array = [0x11, 0xFF];//Sposób rozłożenia kolorów w gradiencie
 		static public var BackAlphas:Array = [1, 1];//Powinno być tyle jedeynek ile kolorów
 		

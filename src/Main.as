@@ -108,7 +108,7 @@
 			//Model2.KeepRatio = true;
 			addChild(Model2);
 			
-			Scenka.BackColors = [0xFFFFFF, 0x0000FF];//Kolorki inne niż domyślne
+			Scenka.BackColors = [0xAAAAAA, 0x005588];//Kolorki inne niż domyślne
 			Model3 = new ModelTrzeci(SWidth-6,SHeight-6,"[3] A:=A*b*c*d czyli 'Najlepiej być farciarzem'");
 			Model3.x = 3;
 			Model3.y = SHeight + 3;
@@ -119,7 +119,7 @@
 			Model4.y = SHeight+3;
 			addChild(Model4);
 			
-			Scenka.BackColors = [0x005588, 0x0000AA];//Kolorki inne niż domyślne
+			Scenka.BackColors = [0x555588, 0x000055];//Kolorki inne niż domyślne
 			Scenka.BackRatios = [127,255];
 			Model5 = new ModelEvol1(SWidth - 6, SHeight - 6, "[5] Mikroewolucja: 'wygrywają lepsze pomysły'");
 			Model5.Title.textColor = 0x999999;

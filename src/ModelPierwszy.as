@@ -15,7 +15,7 @@
 		public var IniWidth:Number = 0;
 		public var IniHeight:Number = 0;
 		
-		public function ModelPierwszy(iwidth:Number,iheight:Number,ititle:String="Model #1") 
+		public function ModelPierwszy(iwidth:Number,iheight:Number,ititle:String="Model #1 - const*A") 
 		{
 			super(iwidth, iheight, ititle);
 			IniWidth = iwidth;
@@ -141,7 +141,7 @@
 			
 				if(bedzie_koniec)
 				{
-					trace(Title.text, ' successed');
+					//trace(Title.text, ' successed');
 					removeEventListener(Event.ENTER_FRAME, SimulationStep);
 					addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
 				}

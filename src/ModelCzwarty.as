@@ -112,7 +112,8 @@
 		private var StopRequest:uint = 0; //Dla usera szansa na zatrzymanie i restart
 		protected function RestartOnDClick(e:MouseEvent):void
 		{
-			StopRequest++; trace("Stop requested on '", Title.text,"'");
+			StopRequest++; trace("Stop requested on '", Title.text, "'");
+			e.stopPropagation();
 		}
 		
 		private function Initialise():void
@@ -175,9 +176,9 @@
 			Title.alpha = 1;
 			addChild(Title);
 			
+			addEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);//Do restartowania na double-click
 			//Gotowe, można uruchamiać symulowanie
-			addEventListener(Event.ENTER_FRAME, SimulationStep);
-			addEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);
+			ChangeOnEnterHandle(SimulationStep);//addEventListener(Event.ENTER_FRAME, SimulationStep);
 		}
 		
 		private function SimulationStep(e:Event):void
@@ -225,10 +226,10 @@
 				
 				if(Step>1800 || StopRequest>0)
 				{
-					trace(Title.text, ' successed');
-					removeEventListener(Event.ENTER_FRAME, SimulationStep);
+					//trace(Title.text, ' successed');
 					removeEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);
-					addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
+					//removeEventListener(Event.ENTER_FRAME, SimulationStep);
+					ChangeOnEnterHandle(AfterLastStep);//addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
 				}
 		}
 				
@@ -241,7 +242,7 @@
 					
 			if (getChildAt(1).alpha<=0)//Idą równo więc wystarczy sprawdzić zerowe dziecko
 			{
-				removeEventListener(Event.ENTER_FRAME, AfterLastStep);//Chwilowo nie ma czego robić w nowej klatce
+				ChangeOnEnterHandle(null);// removeEventListener(Event.ENTER_FRAME, AfterLastStep);//Chwilowo nie ma czego robić w nowej klatce
 				
 				for (var j:int = numChildren - 1; j >= 0 ; j--)//I bardziej ogólne usuwanie...
 				{

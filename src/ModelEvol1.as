@@ -32,7 +32,9 @@
 		private var StopRequest:uint = 0; //Dla usera szansa na zatrzymanie i restart
 		protected function RestartOnDClick(e:MouseEvent):void
 		{
-			StopRequest++; trace("Stop requested on '", Title.text,"'");
+			StopRequest++; trace("Stop requested on '", Title.text, "'");
+			//e.preventDefault();//Nie działa
+			e.stopPropagation();
 		}
 		
 		protected function onMouseOverMy(e:MouseEvent):void
@@ -62,10 +64,10 @@
 			Title.alpha = 1;
 			addChild(Title);
 			
-			//Gotowe, można uruchamiać symulowanie
-			addEventListener(Event.ENTER_FRAME, SimulationStep);
 			StopRequest = 0;
 			addEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);
+			//Gotowe, można uruchamiać symulowanie
+			ChangeOnEnterHandle(SimulationStep,-10);
 		}
 		
 		private var Moves:Array = [[1,  1], [0,  1], [ -1,  1],
@@ -210,9 +212,9 @@
 			if(ile_bialych>MC*0.75 || StopRequest>0 )//Jak białych jest więcej niż 75% 
 			{
 				trace(Title.text, ' successed');
-				removeEventListener(Event.ENTER_FRAME, SimulationStep);
 				removeEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);
-				addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
+				//removeEventListener(Event.ENTER_FRAME, SimulationStep);
+				ChangeOnEnterHandle(AfterLastStep);//Nowy sposób zmian stanu klatki
 			}
 		}
 		
@@ -223,7 +225,7 @@
 					
 			if (Wyswietlacz.alpha<=0)
 			{
-				removeEventListener(Event.ENTER_FRAME, AfterLastStep);//Chwilowo nie ma czego robić w nowej klatce
+				ChangeOnEnterHandle(null);// removeEventListener(Event.ENTER_FRAME, AfterLastStep);//Chwilowo nie ma czego robić w nowej klatce
 		
 				for (var j:int = numChildren - 1; j >= 0 ; j--)//I bardziej ogólne usuwanie...
 				{

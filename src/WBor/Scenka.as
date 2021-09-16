@@ -1,5 +1,6 @@
 ﻿package WBor 
 {
+	import adobe.utils.CustomActions;
 	import flash.display.*;
 	import flash.events.Event;
 	import flash.text.*;
@@ -29,8 +30,6 @@
 		
 		//Obsługa powiększania
 		public var KeepRatio:Boolean = false;//Albo powiększa na całość, albo na największe przy zachowaniu proporcji
-		public var Sleepable:Boolean = false;//Czy scenkę można zatrzymać gdy jest załonięta
-		protected var SaveOnEnterFrame:Function = null;//Trzeba tu zapamiętać adres procedury OnEnterFrame żeby można ją było zastopować
 		static protected var WszystkieScenki:Array = new Array();//Żeby można było pomniejszyć zasłonięte scenki i uśpić
 
 		//Obsługa tytułu/podpowiedzi dla danej scenki
@@ -59,15 +58,14 @@
 			Title.alpha = 0;
 			//addChild(Title); Tytuł uwidacznia się dopiero, gdy najedzie się myszką na scenę
 			
+			focusRect = false;
 			useHandCursor = true; //Łapka a ne strzałka?
 			addEventListener(MouseEvent.MOUSE_DOWN, onMouseClick);
-			addEventListener(MouseEvent.DOUBLE_CLICK, onMouseClick);
 			addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 			//addEventListener(MouseEvent.MOUSE_OUT, onMouseOut); Nic nie robi w tej systuacji, ale mógłby...
 		}
 		
-		
-		// Odtąd własności i pola prywatne
+		// Odtąd własności i pola prywatne lub chronione
 		/////////////////////////////////////////////////////////////
 		private var orix:Number;
 		private var oriy:Number;
@@ -94,38 +92,66 @@
 			//Tweener.addTween(Title, { alpha:0, time:0.33 } );
 		}
 		
-		//protected SaveOnEnterFrame:function = null;
+		//Obsluga zwiekszania/zmniejszania i usypiania przy tym
+		private var SaveFocus:InteractiveObject = null;
+		private var Sleeped:Boolean = false;//Czy scenkę można zatrzymać gdy jest załonięta
+		private var SaveOnEnterFrame:Function = null;//Trzeba tu zapamiętać adres procedury OnEnterFrame żeby można ją było zastopować
+		private var SavePriority:int = 0;
+		protected function ChangeOnEnterHandle(OnEnterFrame:Function = null,Priority:int = 0):void//Inteligentnie istaluje i deinstaluje handlery
+		{
+			if (SaveOnEnterFrame != null) //Usuwa jak jest co usunąć
+			{
+				removeEventListener(Event.ENTER_FRAME, SaveOnEnterFrame);
+			}
+
+			SaveOnEnterFrame = OnEnterFrame;
+			
+			if (SaveOnEnterFrame != null && (!Sleeped))
+			{
+				addEventListener(Event.ENTER_FRAME, SaveOnEnterFrame,false,Priority);
+			}
+		}
 		
 		private function MaximizeTweenComplete():void 
 		{ 
-			trace('Resize tweener completed: ', width, 'x', height);
+			trace(Title.text, ' - resize tweener completed: ', width, 'x', height);
 			for (var i:uint; i < WszystkieScenki.length; i++)
 			 if (	WszystkieScenki[i] != this && 
-					WszystkieScenki[i].visible && 
-					WszystkieScenki[i].Sleepable)
+					WszystkieScenki[i].visible )
 					{
 						WszystkieScenki[i].visible = false;
-						//Scenka(WszystkieScenki[i]).
+						with (Scenka(WszystkieScenki[i]))
+						{
+							removeEventListener(Event.ENTER_FRAME, SaveOnEnterFrame);
+						}						
 					}
-			this.TweenFinish = 0; 			
+			SaveFocus = stage.focus;
+			stage.focus = this;		
+			this.TweenFinish = 0; 	
 		}
 		
 		private function RestoreTweenComplete():void 
 		{ 
-			trace('Resize tweener completed: ', width, 'x', height);
+			trace(Title.text,' - resize tweener completed: ', width, 'x', height);
 			for (var i:uint; i < WszystkieScenki.length; i++)
 			 if (	WszystkieScenki[i] != this && 
 					(!WszystkieScenki[i].visible) )
 					{
 						WszystkieScenki[i].visible = true;
-						//Scenka(WszystkieScenki[i]).h
+						with (Scenka(WszystkieScenki[i]))
+						{
+							addEventListener(Event.ENTER_FRAME, SaveOnEnterFrame,false,SavePriority);
+						}
 					}
+			stage.focus = SaveFocus;
+			SaveFocus = null;			
 			this.TweenFinish = 0; 			
 		}
 		
 		protected function onMouseClick(e:MouseEvent):void
 		{
 			//trace('Mouse click');
+			e.stopPropagation();
 			if (scaleX <= 1 || scaleY <= 1)//Normalny rozmiar czyli będzie powiększanie
 			{
 				if (width < Default_width && height < Default_height && TweenFinish==0)

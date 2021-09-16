@@ -202,7 +202,7 @@
 			addChild(Title);
 			
 			//Gotowe, można uruchamiać symulowanie
-			addEventListener(Event.ENTER_FRAME, SimulationStep,false,-10);
+			ChangeOnEnterHandle(SimulationStep, -10);//addEventListener(Event.ENTER_FRAME, SimulationStep,false,-10);
 		}
 		
 		private function SimulationStep(e:Event):void
@@ -235,9 +235,9 @@
 				
 				if(bedzie_koniec)
 				{
-					trace(Title.text, ' successed');
-					removeEventListener(Event.ENTER_FRAME, SimulationStep);
-					addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
+					//trace(Title.text, ' successed');
+					//removeEventListener(Event.ENTER_FRAME, SimulationStep);
+					ChangeOnEnterHandle(AfterLastStep);//addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
 				}
 		}
 		
@@ -250,7 +250,7 @@
 					
 			if (getChildAt(1).alpha<=0)//Idą równo więc wystarczy sprawdzić zerowe dziecko
 			{
-				removeEventListener(Event.ENTER_FRAME, AfterLastStep);//Chwilowo nie ma czego robić w nowej klatce
+				ChangeOnEnterHandle(null);//removeEventListener(Event.ENTER_FRAME, AfterLastStep);//Chwilowo nie ma czego robić w nowej klatce
 				
 				for (var j:int = numChildren - 1; j >= 0 ; j--)//I bardziej ogólne usuwanie...
 				{

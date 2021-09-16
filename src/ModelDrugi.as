@@ -26,7 +26,7 @@
 			//matr.identity();
 			//matr.rotate(Math.PI/8);
 			var spreadMethod:String = SpreadMethod.REFLECT;
-			graphics.beginGradientFill(GradientType.RADIAL, [0xffff00, 0x44dd00], [1, 1], [0, 255],null,spreadMethod);
+			graphics.beginGradientFill(GradientType.RADIAL, [0xffff00, 0x444400], [1, 1], [0, 255],null,spreadMethod);
 			graphics.lineStyle(0, 0x0099ff);
 			graphics.drawRect(0, (height / 3) * 2, width , (height / 3));
 			graphics.endFill();
@@ -54,6 +54,7 @@
 		private function Initialise():void
 		//Inicjalizacja musi być tak zrobiona, żeby można było ją ponownie użyć, jak symulacja się zakończy!
 		{
+			/*
 			const SzerokoscSlupka:Number = 10;
 			const KonieczneMiejsce:Number = SzerokoscSlupka + 8; //Żeby słupki nie były za blisko
 			const N:uint = 10; //ile realnie słupków
@@ -62,44 +63,73 @@
 			var xkrok:Number = (IniWidth - 20) / Miejsc;//Ile miejsca na każdą pozycję
 			var Kolejny:Slupek; //Pomocnicza zmienna na kolejne slupki
 			limit = ypos-3*Slupek.vert_deph;//Jak wysokość jakiegoś slupka dojdzie do limitu to zwijamy symulacje
-		
-			for (var i:uint = 0; i < N; i++)
+			*/
+			
+			const N:uint = 75; //ile słupków ma być
+			const Rz:uint = 5; //w ilu rzędach
+			const BegYpos:Number = IniHeight - IniHeight/5;//Najdalsze możliwe slupki
+			const OdlegloscPionowa:Number = (IniHeight - 10 - BegYpos) / Rz;
+			const SzerokoscSlupka:Number = 9;
+			const KonieczneMiejsce:Number = SzerokoscSlupka + 5; //Żeby słupki nie były za blisko
+			
+			var Miejsc:Number = ((IniWidth - Rz*Slupek.vert_deph) / KonieczneMiejsce)-1;//Ile jest pozycji na słupki
+			var xkrok:Number = (IniWidth - Rz*Slupek.vert_deph) / (Miejsc+1);//Ile miejsca na każdą pozycję
+			var Kolejny:Slupek; //Pomocnicza zmienna na kolejne slupki
+			var KolejnyNumer:uint = 0;
+			
+			limit = BegYpos-3*Slupek.vert_deph;//Jak wysokość jakiegoś slupka dojdzie do limitu to zwijamy symulacje
+		    
+			for (var j:uint = 0; j < Rz; j++)
 			{
-				do{
-				var RandPos:uint = 10+uint(Math.random() * Miejsc) * xkrok;//Czasem pozycja może być już w użyciu!
-				}while (!PositionFree(RandPos));
-		
-				var eR:Number = Math.random()* Math.random() * 0.07;//Nie więcej niż o 7% na klatkę
-				eRy[i] = 1 + eR;
-				
-				var Elipsa:Shape = new Shape();
-				var PositKolor:RGBColor = new RGBColor(0);
-				PositKolor.r = 155;// 255 - eR * 10 * 200;
-				PositKolor.g = 255 - eR * 10 * 200;
-				Elipsa.graphics.beginFill(PositKolor.toColor());
-				Elipsa.graphics.lineStyle(1,PositKolor.toColor());
-				Elipsa.graphics.drawEllipse(-xkrok/2,-xkrok/4,xkrok,xkrok/2);
-				Elipsa.graphics.endFill();
-				//Elipsa.graphics.lineStyle(1, 0xffffff);//Kontrolny środek elipsy
-				//Elipsa.graphics.drawRect(0, 0, 1, 1);
-				Elipsa.x = RandPos+Elipsa.width / 3;
-				Elipsa.y = ypos - Elipsa.height / 4;// ?
-				addChild(Elipsa);
+				var PosY:uint = BegYpos + j * OdlegloscPionowa;
+				for (var i:uint = 0; i < N/Rz; i++)
+				{
+					do{
+					var RandPosX:uint = (Rz-j)*Slupek.vert_deph+uint(Math.random() * Miejsc) * xkrok;//Czasem pozycja może być już w użyciu!
+					//trace(RandPosX);graphics.drawRect(RandPosX,PosY-OdlegloscPionowa, xkrok, xkrok);//DEBUG
+					}while (!PositionFree(RandPosX/*,PosY*/));
+
+					var eR:Number = Math.random()* Math.random()* Math.random() * 0.05;//Nie więcej niż o 5% na klatkę
+					var Elipsa:Shape = new Shape();
+					var PositKolor:RGBColor = new RGBColor(0);
+					PositKolor.g = 255 - (eR * 20) * 200;
+					Elipsa.graphics.beginFill(PositKolor.toColor());
+					Elipsa.graphics.lineStyle(1,PositKolor.toColor(),0.25);
+					Elipsa.graphics.drawEllipse(-xkrok/2,-xkrok/4,xkrok,OdlegloscPionowa);
+					Elipsa.graphics.endFill();
+					//Elipsa.graphics.lineStyle(1, 0xffffff);//Kontrolny środek elipsy
+					//Elipsa.graphics.drawRect(0, 0, 1, 1);
+					Elipsa.x = RandPosX+Elipsa.width / 3;
+					Elipsa.y = PosY - Elipsa.height / 4;// ?
+					Elipsa.alpha = 0.75;//?
+					addChild(Elipsa);
 								
-				var RandKolor:RGBColor = new RGBColor(0);
-				RandKolor.r = 100 + Math.random() * 100;
-				RandKolor.g = 100 + Math.random() * 100;
-				RandKolor.b = 100 + Math.random() * 100;
-				Kolejny = new Slupek(RandPos, ypos, SzerokoscSlupka, 1, RandKolor.toColor());	
-				slupki[i] = Kolejny;
-				addChild(Kolejny);
-				Kolejny.visible = false;
+					PositKolor.r = 255-PositKolor.g;
+					PositKolor.b = 0;
+					Kolejny = new Slupek(RandPosX, PosY, SzerokoscSlupka, 1,PositKolor.toColor());	
+					slupki[KolejnyNumer] = Kolejny;
+					eRy[KolejnyNumer] = 1 + eR;
+					KolejnyNumer++;
+					addChild(Kolejny);
+					Kolejny.visible = false;
+				}
 			}
 			
-			//Teraz trzeba wybrać tego pierwszego
-			var LosowyIndeks:uint = uint(Math.random() * N);//Mam nadzieję że to obcina częśc ułamkową, a nie zaokragla
-			Kolejny = Slupek(slupki[LosowyIndeks]);
-			Kolejny.visible = true;
+			//Teraz trzeba wybrać tego pierwszego albo wszystkie startują razem
+			if (Math.random() < 0.5)
+			{
+				var LosowyIndeks:uint = uint(Math.random() * N);//uint() obcina część ułamkową, a nie zaokragla
+				Kolejny = Slupek(slupki[LosowyIndeks]);
+				Kolejny.visible = true;
+			}
+			else
+			{
+				for (j = 0; j < N; j++)
+					Slupek(slupki[j]).visible = true;
+			}
+			
+			Title.alpha = 1;
+			addChild(Title);
 			
 			//Gotowe, można uruchamiać symulowanie
 			addEventListener(Event.ENTER_FRAME, SimulationStep);
@@ -110,6 +140,7 @@
 		//Generalnie słupki rosną w tym samym tempie, ale te co wcześniej zaczęły przyrastają bardziej.
 		{
 			var bedzie_koniec:Boolean = false;
+			Title.alpha *= 0.95;
 			
 			for (var i:uint = 0; i < slupki.length; i++)
 				with( Slupek(slupki[i]) )
@@ -140,17 +171,11 @@
 		private function AfterLastStep(e:Event):void
 		//Wizualne powolne sprzątanie po symulacji, aż będzie można uruchomić ponownie
 		{
-			var bedzie_koniec:Boolean = false;
 			
 			for (var i:uint = 0; i < numChildren; i++) //Rozmywanie bardziej ogólne...
-				with ( getChildAt(i) )
-					{
-						alpha -= 0.05;//Przy dziesieciu klatkach na sekundę będzie to trwało 2 sek.
-						if (alpha <= 0)
-							bedzie_koniec = true;
-					}
+				getChildAt(i).alpha -= 0.05;//Przy dziesieciu klatkach na sekundę będzie to trwało 2 sek.
 					
-			if (bedzie_koniec)
+			if (getChildAt(0).alpha<=0)//Idą równo więc wystarczy sprawdzić zerowe dziecko
 			{
 				removeEventListener(Event.ENTER_FRAME, AfterLastStep);//Chwilowo nie ma czego robić w nowej klatce
 				

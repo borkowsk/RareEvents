@@ -51,6 +51,10 @@
 			Wyswietlacz.y = 0;// IniHeight / 3;
 			//Wyswietlacz.height = (IniHeight / 3) * 2;
 			addChild(Wyswietlacz);
+			
+			Title.alpha = 1;
+			addChild(Title);
+			
 			//Gotowe, można uruchamiać symulowanie
 			addEventListener(Event.ENTER_FRAME, SimulationStep);
 		}
@@ -62,17 +66,17 @@
 		private static function MozeMutuj(parent:uint):uint
 		{
 			var gens:uint = parent;//Geny do ewentualnego zmutowania
-			var poz:uint = Math.random() * 240*10;//Mniej więcej co dziesiąty (albo co setny) będzie mutował
-			if (poz > 24) //Nie ma mutacji. Kanal alpha jest chroniony (mam nadzieję)
+			var poz:uint = Math.random() * 240*1000;//Nie częściej niż co dziesiąty możę mutować. Albo lepiej rzadziej
+			if (poz > 23) //Nie ma mutacji. Kanal alpha jest chroniony (mam nadzieję)
 			{
 				return gens;
 			}
 			else //Niestety jest, trzeba pokombinować :-)
 			{
-				var mask:uint = 0x000001 << poz;
+				var mask:uint = 0x00000001 << poz;
 				gens ^= mask; //Do magic :-))))
 				//trace(parent,' ', gens);
-				if (gens & 0xff000000 != 0xff000000) trace('Bląd algorytmu - mutacja kanału alpha');
+				//if ((gens & 0xff000000) != 0xff000000) trace('Bląd algorytmu - mutacja kanału alpha');
 				return gens;
 			}
 		}
@@ -116,6 +120,8 @@
 		//Wykonuje kroki symulacji tak dlugo jak się da, a potem podmienia na zakończenie (AfterLastStep)
 		//Populacje ewoluują w kierunku białego, a potem od nowa.
 		{
+			Title.alpha *= 0.95;
+			
 			var ile_bialych:uint = 0;
 			var FullSize:uint = Obszar.width * Obszar.height; 
 			var MC:uint = (Obszar.width * Obszar.height) / 5;//20% obszaru probkowania na klatkę
@@ -147,7 +153,7 @@
 				if (first_a != 0 && second_a == 0)//Pelny na pusty - przemieść lub rozmnóz
 				{
 					Obszar.setPixel32(nx, ny, first);//Zywy na nowe miejsce
-					if (Math.random() < 0.5) //Jak jest wolne miejsce to trzeba korzystać!
+					if (Math.random() < 0.75) //Jak jest wolne miejsce to trzeba korzystać!
 						Obszar.setPixel32(x, y, MozeMutuj(first))//Rozmnazanie
 					else
 						Obszar.setPixel32(x, y, second);//Zamiana
@@ -156,7 +162,7 @@
 				if (first_a == 0 && second_a != 0)//Pusty na pełny - przemieść lub rozmnóz
 				{
 					Obszar.setPixel32(x, y, second);//Zywy na nowe miejsce
-					if (Math.random() < 0.5)  //Jak jest wolne miejsce to trzeba korzystać!
+					if (Math.random() < 0.75)  //Jak jest wolne miejsce to trzeba korzystać!
 						Obszar.setPixel32(nx, ny, MozeMutuj(second))//Rozmnazanie
 					else
 						Obszar.setPixel32(nx, ny, first);//Zamiana
@@ -166,7 +172,7 @@
 					//Lepsze są te bliższe białego
 					//////////////////////////////
 	
-					//DUŻO SZYBCIEJ Z OSTRĄ SELEKCJĄ
+					//Z OSTRĄ SELEKCJĄ DUŻO SZYBCIEJ
 					if (first == second) //Jak równe to interakcja wewnątrzgatunkowa - musi być szansa na rozmnażanie w srodku
 					{
 						Obszar.setPixel32(nx, ny, MozeMutuj(second));//Niby miłość, choć potomek kosztem jednego z rodziców

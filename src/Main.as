@@ -56,14 +56,14 @@
 			var SHeight:Number = Default_height / 3;
 			
 			Scenka.BackGradientType = GradientType.LINEAR;
-			Model1 = new ModelPierwszy(SWidth - 6, SHeight - 6, "Model 1: Kto pierwszy ten lepszy");
+			Model1 = new ModelPierwszy(SWidth - 6, SHeight - 6, 'A:=const*A czyli "Kto pierwszy ten lepszy"');
 			Model1.Title.textColor = 0x00ffff;
 			Model1.x = 3;
 			Model1.y = 3;
 			addChild(Model1);
 			
 			Scenka.BackGradientType = GradientType.RADIAL;
-			Model2 = new ModelDrugi(SWidth - 6, SHeight - 6, "Model 2: Lepiej mieć lepsze miejsce");
+			Model2 = new ModelDrugi(SWidth - 6, SHeight - 6, 'A:=b*A czyli "Lepiej mieć lepsze miejsce"');
 			Model2.Title.textColor = 0xffff00;
 			Model2.x = SWidth+3;
 			Model2.y = 3;
@@ -83,7 +83,7 @@
 			
 			Scenka.BackColors = [0x005588, 0x0000AA];//Kolorki inne niż domyślne
 			Scenka.BackRatios = [127,255];
-			Model5 = new ModelEvol1(SWidth - 6, SHeight - 6, "Model 5: Prosta ewolucja ku białemu");
+			Model5 = new ModelEvol1(SWidth - 6, SHeight - 6, 'Mikroewolucja czyli "Lepiej miec lepsze geny"');
 			Model5.Title.textColor = 0x999999;
 			Model5.x = 3;
 			Model5.y = 2 * SHeight + 3;

@@ -70,7 +70,7 @@
 				var RandKolor:RGBColor = new RGBColor(0);
 				RandKolor.r = 100 + Math.random() * 100;
 				RandKolor.g = 100 + Math.random() * 100;
-				Kolejny = new Slupek(RandPos, ypos, SzerokoscSlupka, 1, RandKolor.toUint());	
+				Kolejny = new Slupek(RandPos, ypos, SzerokoscSlupka, 1, RandKolor.toColor());	
 				slupki[i] = Kolejny;
 				addChild(Kolejny);
 				Kolejny.visible = false;
@@ -111,6 +111,7 @@
 				
 				if(bedzie_koniec)
 				{
+					trace(Title.text, ' successed');
 					removeEventListener(Event.ENTER_FRAME, SimulationStep);
 					addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
 				}

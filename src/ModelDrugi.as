@@ -76,8 +76,8 @@
 				var PositKolor:RGBColor = new RGBColor(0);
 				PositKolor.r = 155;// 255 - eR * 10 * 200;
 				PositKolor.g = 255 - eR * 10 * 200;
-				Elipsa.graphics.beginFill(PositKolor.toUint());
-				Elipsa.graphics.lineStyle(1,PositKolor.toUint());
+				Elipsa.graphics.beginFill(PositKolor.toColor());
+				Elipsa.graphics.lineStyle(1,PositKolor.toColor());
 				Elipsa.graphics.drawEllipse(-xkrok/2,-xkrok/4,xkrok,xkrok/2);
 				Elipsa.graphics.endFill();
 				//Elipsa.graphics.lineStyle(1, 0xffffff);//Kontrolny środek elipsy
@@ -90,7 +90,7 @@
 				RandKolor.r = 100 + Math.random() * 100;
 				RandKolor.g = 100 + Math.random() * 100;
 				RandKolor.b = 100 + Math.random() * 100;
-				Kolejny = new Slupek(RandPos, ypos, SzerokoscSlupka, 1, RandKolor.toUint());	
+				Kolejny = new Slupek(RandPos, ypos, SzerokoscSlupka, 1, RandKolor.toColor());	
 				slupki[i] = Kolejny;
 				addChild(Kolejny);
 				Kolejny.visible = false;
@@ -131,6 +131,7 @@
 				
 				if(bedzie_koniec)
 				{
+					trace(Title.text, ' successed');
 					removeEventListener(Event.ENTER_FRAME, SimulationStep);
 					addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
 				}

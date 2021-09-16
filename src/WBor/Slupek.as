@@ -79,7 +79,7 @@
 			pom.b /= 2;
 			graphics.moveTo(0 + iwidth, 0 - iheight);
 			//graphics.lineStyle(1, 0);
-			graphics.beginFill(pom.toUint());
+			graphics.beginFill(pom.toColor());
 			graphics.lineTo(0 + iwidth + hori_deph, 0 - iheight - vert_deph);
 			graphics.lineTo(0 + iwidth + hori_deph, 0 - vert_deph);
 			graphics.lineTo(0 + iwidth , 0 );
@@ -89,7 +89,7 @@
 			pom.b *= 3;
 			graphics.moveTo(0 , 0 - iheight);
 			graphics.lineStyle(0, 0xffffff);
-			graphics.beginFill(pom.toUint());
+			graphics.beginFill(pom.toColor());
 			graphics.lineTo(0 + hori_deph, 0 - iheight - vert_deph);
 			graphics.lineTo(0 + hori_deph + iwidth, 0 - iheight - vert_deph);
 			graphics.lineTo(0 + iwidth, 0 - iheight);

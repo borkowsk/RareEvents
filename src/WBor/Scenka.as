@@ -67,7 +67,7 @@
 		private var oriy:Number;
 		internal var TweenFinish:uint = 0;
 		
-		private function onMouseOver(e:MouseEvent):void
+		protected function onMouseOver(e:MouseEvent):void
 		{
 			//trace('Mouse over');			
 			try {
@@ -82,7 +82,7 @@
 			Tweener.addTween(Title, { alpha:0, delay:TitleSec/2, time:TitleSec/2 } );
 		}
 		
-		private function onMouseOut(e:MouseEvent):void
+		protected function onMouseOut(e:MouseEvent):void
 		{			
 			//trace('Mouse out');
 			//Tweener.addTween(Title, { alpha:0, time:0.33 } );
@@ -94,7 +94,7 @@
 			this.TweenFinish = 0; 			
 		}
 		
-		private function onMouseClick(e:MouseEvent):void
+		protected function onMouseClick(e:MouseEvent):void
 		{
 			//trace('Mouse click');
 			if (scaleX <= 1 || scaleY <= 1)

@@ -60,7 +60,6 @@
 			Model1.Title.textColor = 0x00ffff;
 			Model1.x = 3;
 			Model1.y = 3;
-			Model1.KeepRatio = true;
 			addChild(Model1);
 			
 			Scenka.BackGradientType = GradientType.RADIAL;
@@ -68,10 +67,10 @@
 			Model2.Title.textColor = 0xffff00;
 			Model2.x = SWidth+3;
 			Model2.y = 3;
-			//Model2.KeepRatio = true;
+			Model2.KeepRatio = true;
 			addChild(Model2);
 			
-			Scenka.BackColors = [0x00DDFF, 0x0000FF];//Kolorki inne niż domyślne
+			Scenka.BackColors = [0xFFFFFF, 0x0000FF];//Kolorki inne niż domyślne
 			Model3 = new Scenka(SWidth-6,SHeight-6,"Model 3");
 			Model3.x = 3;
 			Model3.y = SHeight+3;
@@ -82,9 +81,13 @@
 			Model4.y = SHeight+3;
 			addChild(Model4);
 			
-			Model5 = new Scenka(SWidth-6,SHeight-6,"Model 5");
+			Scenka.BackColors = [0x005588, 0x0000AA];//Kolorki inne niż domyślne
+			Scenka.BackRatios = [127,255];
+			Model5 = new ModelEvol1(SWidth - 6, SHeight - 6, "Model 5: Prosta ewolucja ku białemu");
+			Model5.Title.textColor = 0x999999;
 			Model5.x = 3;
-			Model5.y = 2*SHeight+3;
+			Model5.y = 2 * SHeight + 3;
+			Model5.KeepRatio = true;
 			addChild(Model5);
 			
 			Model6 = new Scenka(SWidth-6,SHeight-6,"Model 6");

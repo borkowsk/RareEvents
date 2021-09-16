@@ -26,6 +26,13 @@
 			//...
 			Initialise();
 			addEventListener(MouseEvent.MOUSE_OVER, onMouseOverMy);
+			this.doubleClickEnabled = true;
+		}
+		
+		private var StopRequest:uint = 0; //Dla usera szansa na zatrzymanie i restart
+		protected function RestartOnDClick(e:MouseEvent):void
+		{
+			StopRequest++; trace("Stop requested on '", Title.text,"'");
 		}
 		
 		protected function onMouseOverMy(e:MouseEvent):void
@@ -40,10 +47,10 @@
 		private function Initialise():void
 		//Inicjalizacja musi być tak zrobiona, żeby można było ją ponownie użyć, jak symulacja się zakończy!
 		{
-			Obszar = new BitmapData(IniWidth/2, IniHeight/2,true, 0xffffff);
+			Obszar = new BitmapData(IniWidth/2, IniHeight/2,true, 0x00000000);
 			//Obszar.noise(5);
-			Obszar.fillRect(Obszar.rect, 0x00000000);//		BitmapDataChannel.ALPHA
-			Obszar.setPixel32(Obszar.width / 2, Obszar.height / 2, 0xff000100);
+			//Obszar.fillRect(Obszar.rect, 0x00000000);//		BitmapDataChannel.ALPHA
+			Obszar.setPixel32(Obszar.width / 2, Obszar.height / 2, 0xFF000001);
 			Wyswietlacz = new Bitmap(Obszar);
 			Wyswietlacz.scaleX = 2;
 			Wyswietlacz.scaleY = 2;
@@ -57,6 +64,8 @@
 			
 			//Gotowe, można uruchamiać symulowanie
 			addEventListener(Event.ENTER_FRAME, SimulationStep);
+			StopRequest = 0;
+			addEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);
 		}
 		
 		private var Moves:Array = [[1,  1], [0,  1], [ -1,  1],
@@ -65,6 +74,8 @@
 								   
 		private static function MozeMutuj(parent:uint):uint
 		{
+			//return parent;
+			
 			var gens:uint = parent;//Geny do ewentualnego zmutowania
 			var poz:uint = Math.random() * 240*1000;//Nie częściej niż co dziesiąty możę mutować. Albo lepiej rzadziej
 			if (poz > 23) //Nie ma mutacji. Kanal alpha jest chroniony (mam nadzieję)
@@ -79,6 +90,7 @@
 				//if ((gens & 0xff000000) != 0xff000000) trace('Bląd algorytmu - mutacja kanału alpha');
 				return gens;
 			}
+			
 		}
 		
 		private static var Bits:Array = FillBitNumber();
@@ -124,8 +136,8 @@
 			
 			var ile_bialych:uint = 0;
 			var FullSize:uint = Obszar.width * Obszar.height; 
-			var MC:uint = (Obszar.width * Obszar.height) / 5;//20% obszaru probkowania na klatkę
-			
+			var MC:uint = (Obszar.width * Obszar.height) / 10;//10% obszaru probkowania na klatkę
+			Obszar.lock();
 			for (var i:uint = 0; i < MC; i++) //Głowna pętla symulacji
 			{
 				var pos:uint = Math.random() * FullSize;
@@ -136,8 +148,8 @@
 				var vy:int = Moves[dir][1];
 				var nx:int = (Obszar.width + x + vx) % Obszar.width;
 				var ny:int = (Obszar.height + y + vy) % Obszar.height;
-				var first:uint=Obszar.getPixel32(x, y);
-				var second:uint = Obszar.getPixel32(nx, ny);
+				var first:uint=Obszar.getPixel32(x, y); //Można się poslugiwać bezposrednio bo Alfa jest 255 jak jest żywy
+				var second:uint = Obszar.getPixel32(nx, ny);// j.w.
 				var first_a:uint = first & 0xff000000; //Extract alpha channel
 				var second_a:uint = second & 0xff000000; //Extract alpha channel
 				
@@ -192,13 +204,14 @@
 					}		
 				}
 			}
-			
+			Obszar.unlock();
 			//if (ile_bialych > 0) trace(ile_bialych, '/', MC);//Gdy białe zaczynają ostatnia walkę o panowanie
 			
-			if(ile_bialych>MC*0.75)//Jak białych jest więcej niż 75% 
+			if(ile_bialych>MC*0.75 || StopRequest>0 )//Jak białych jest więcej niż 75% 
 			{
 				trace(Title.text, ' successed');
 				removeEventListener(Event.ENTER_FRAME, SimulationStep);
+				removeEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);
 				addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
 			}
 		}

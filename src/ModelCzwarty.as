@@ -2,6 +2,7 @@
 {
 	import flash.display.*;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import WBor.RGBColor;
 	import WBor.Scenka;
@@ -20,13 +21,14 @@
 		private var Obszar:BitmapData;
 		private var Wyswietlacz:Bitmap;
 		
-		public function ModelCzwarty(iwidth:Number,iheight:Number,ititle:String="Model #3 A w zmiennym środowisku") 
+		public function ModelCzwarty(iwidth:Number,iheight:Number,ititle:String="Model #4 W zmiennym środowisku") 
 		{
 			super(iwidth, iheight, ititle);
 			IniWidth = iwidth;
 			IniHeight = iheight;
 			
 			Initialise();
+			this.doubleClickEnabled = true;
 		}
 		
 		private var slupki:Array;
@@ -54,20 +56,21 @@
 		{
 			return x * x * x * x * x;
 		}
-		
-		private var Wspolczynniki:Array = [[2,5,11],[2,7,11],[3,5,11],[3,7,11],[5,7,13],[5,11,23],//Wybrane najlepsze
+										//[2,5,11],[2,7,11],[3,5,11],
+		private var Wspolczynniki:Array = [[3,5,11],[3,7,11],[5,7,13],[5,11,23],[7, 13, 17],[7, 13, 19],//Wybrane najlepsze
+										   [11, 17, 23],
 										   [3, 5, 7], [5, 7, 11], [7, 11, 13], [11, 13, 17],
 										   [3, 7, 11], [5 , 11, 13], [7, 13, 17], [11, 17, 19],
 										   [3, 7, 13], [5 , 11, 17], [7, 13, 19], [11, 17, 23]];
 										   
-		private var wspi:uint=Math.random() * 8;
+		private var wspi:uint=Math.random() * 6;
 		
 		private function FillBackground(TimeOffset:Number,modul:uint=1,rest:uint=0):void
 		{
 			//trace(TimeOffset,wspi,': ',Wspolczynniki[wspi]);
 			var pom:RGBColor = new RGBColor(0);
 			pom.a = 255;
-			
+			Obszar.lock();
 			for (var i:uint = 0; i < Obszar.height; i++)
 			  if(i%modul==rest)//Mozna wybrać co którąś linię
 				for (var j:uint = 0; j < Obszar.width; j++)
@@ -76,11 +79,13 @@
 					var x:Number = j / Number(Obszar.width);
 					//pom.g = 100 + 100 * Math.sin(-x * Math.PI * Wspolczynniki[wspi][0]);
 					//pom.g = 100 + 100 * Math.sin((x + y)/2 * Math.PI * Wspolczynniki[wspi][0]);
-					pom.g = 128 + 127 * (Math.sin( (x - y) * Math.PI * Wspolczynniki[wspi][0] +TimeOffset*2*Math.PI ) );
+					pom.g = 128 + 127 * (2.0/3.0*(Math.sin( (x - y) * Math.PI * Wspolczynniki[wspi][0] +TimeOffset * 2 * Math.PI ) ) +
+										1/3.0*(Math.sin( (x - y) * Math.PI * Wspolczynniki[wspi][0]*19/7.0 +TimeOffset * 2 * Math.PI ) ));
 					pom.b = 128 + 127 * cub(Math.sin( y * -x * Math.PI * Wspolczynniki[wspi][1] +TimeOffset*4*Math.PI ) );
 					pom.r = 128 + 127 * trans(Math.sin( x * -y  * Math.PI * Wspolczynniki[wspi][2] -TimeOffset*2*Math.PI) );
 					Obszar.setPixel(j,i,pom.toColor());
 				}
+			Obszar.unlock();	
 		}
 		
 		private function MeanBackground(x:uint, y:uint, lx:uint, MeanColor:RGBColor):void
@@ -104,6 +109,11 @@
 		}
 		
 		private var Step:uint = 0;//Licznik kroków - potrzebny dla zmian tła
+		private var StopRequest:uint = 0; //Dla usera szansa na zatrzymanie i restart
+		protected function RestartOnDClick(e:MouseEvent):void
+		{
+			StopRequest++; trace("Stop requested on '", Title.text,"'");
+		}
 		
 		private function Initialise():void
 		//Inicjalizacja musi być tak zrobiona, żeby można było ją ponownie użyć, jak symulacja się zakończy!
@@ -112,6 +122,7 @@
 			Obszar.fillRect(Obszar.rect, 0xFF000000);//		BitmapDataChannel.ALPHA
 			FillBackground(0);//Start time
 			Step = 0;
+			StopRequest = 0;
 			Wyswietlacz = new Bitmap(Obszar);
 			Wyswietlacz.x = 0;
 			Wyswietlacz.y = IniHeight / 2;
@@ -166,6 +177,7 @@
 			
 			//Gotowe, można uruchamiać symulowanie
 			addEventListener(Event.ENTER_FRAME, SimulationStep);
+			addEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);
 		}
 		
 		private function SimulationStep(e:Event):void
@@ -211,14 +223,15 @@
 					}
 				}
 				
-				if(Step>1800)
+				if(Step>1800 || StopRequest>0)
 				{
 					trace(Title.text, ' successed');
 					removeEventListener(Event.ENTER_FRAME, SimulationStep);
+					removeEventListener(MouseEvent.DOUBLE_CLICK, RestartOnDClick);
 					addEventListener(Event.ENTER_FRAME, AfterLastStep);//Nowy sposób zmian stanu klatki
 				}
 		}
-		
+				
 		private function AfterLastStep(e:Event):void
 		//Wizualne powolne sprzątanie po symulacji, aż będzie można uruchomić ponownie
 		{

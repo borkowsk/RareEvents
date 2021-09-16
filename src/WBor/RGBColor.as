@@ -18,10 +18,10 @@
 	
 		public function toRGB(color:uint):void
 		{
-			a = (color & 0xff000000)>>24; //Alpha
-			r = (color & 0x00ff0000)>>16; //Red
-			g = (color & 0x0000ff00)>>8;  //Green
-			b = (color & 0x000000ff);	  //Blue
+			a = (color >> 24) & 0xff; //Alpha
+			r = (color >> 16) & 0xff; //Red
+			g = (color >> 8) & 0xff;  //Green
+			b = (color & 0xff);	  //Blue
 		}
 		
 		public function toColor():uint //RGB without alpha channel
@@ -30,7 +30,7 @@
 			if (r > 255) r = 255;
 			if (g > 255) g = 255;
 			if (b > 255) b = 255;
-			pom = (r << 16) + (g << 8) + b;
+			pom = (r << 16) | (g << 8) | b;
 			return pom;
 		}
 		
@@ -41,7 +41,7 @@
 			if (r > 255) r = 255;
 			if (g > 255) g = 255;
 			if (b > 255) b = 255;
-			pom = (a<<24) + (r << 16) + (g << 8) + b;
+			pom = (a << 24) | (r << 16) | (g << 8) | b;
 			return pom;
 		}
 	}

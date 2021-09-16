@@ -56,7 +56,36 @@
 			return x * x * x * x * x;
 		}
 		
-		private var Wspolczynniki:Array = [[2,5,11],[2,7,11],[3,5,11],[3,7,11],[5,7,13],[5,11,23],//Wybrane najlepsze
+		private function trans_sqrt(x:Number):Number
+		{
+			if(x>0)
+			return Math.pow(x,1/3); 
+			else
+			if (x < 0)
+			return -Math.pow( -x,1/3);
+			else
+			return 0;
+		}
+		
+		private function bessel1(x:Number):Number
+		{
+			if (x != 0)
+				return Math.sin(x) / x;
+			else
+				return 1;
+		}
+		
+		private function bessel1N(x:Number):Number
+		{
+			x = x * Math.PI;
+			if (x != 0)
+				return  Math.sin(x) / x;
+			else
+				return 1;
+		}
+											//[2,5,11],[2,7,11],[3,5,11],[5,7,11],[5,7,13],[5 , 11, 17],
+		private var Wspolczynniki:Array = [
+											[5,11,23],[7, 13, 19], [7, 11, 19],[7, 13, 19],[11, 17, 19], [11, 17, 23],//Wybrane najlepsze
 										   [3, 5, 7], [5, 7, 11], [7, 11, 13], [11, 13, 17],
 										   [3, 7, 11], [5 , 11, 13], [7, 13, 17], [11, 17, 19],
 										   [3, 7, 13], [5 , 11, 17], [7, 13, 19], [11, 17, 23]];
@@ -64,7 +93,8 @@
 		private function FillBackground():void
 		{
 			var wspi:uint = Math.random() * 6;//Wspolczynniki.length;
-			trace(wspi,': ',Wspolczynniki[wspi]);
+			var TimeOffset:Number = Math.random();
+			trace(wspi,': ',Wspolczynniki[wspi],' off:',TimeOffset);
 			
 			var pom:RGBColor = new RGBColor(0);
 			pom.a = 255;
@@ -76,7 +106,7 @@
 					var x:Number = j / Number(Obszar.width);
 					//pom.g = 100 + 100 * Math.sin(-x * Math.PI * Wspolczynniki[wspi][0]);
 					//pom.g = 100 + 100 * Math.sin((x + y)/2 * Math.PI * Wspolczynniki[wspi][0]);
-					pom.g = 128 + 127 * (Math.sin((x - y) * Math.PI * Wspolczynniki[wspi][0]));
+					pom.g = 128 + 127 * (bessel1( (x - y) * Math.PI * Wspolczynniki[wspi][0] +TimeOffset * 2 * Math.PI  ));
 					pom.b = 128 + 127 * cub(Math.sin(y * -x* Math.PI * Wspolczynniki[wspi][1]));
 					pom.r = 128 + 127 * trans(Math.sin(-y * x * Math.PI * Wspolczynniki[wspi][2]));
 					Obszar.setPixel(j,i,pom.toColor());
@@ -156,7 +186,7 @@
 			
 			//Teraz trzeba wybrać tego pierwszego albo wszystkie startują razem
 			
-			if (Math.random() < 0.75)
+			if (Math.random() < 0.8)
 			{
 				var LosowyIndeks:uint = uint(Math.random() * slupki.length);//uint() obcina część ułamkową, a nie zaokragla
 				Kolejny = Slupek(slupki[LosowyIndeks]);

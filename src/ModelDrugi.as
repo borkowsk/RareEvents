@@ -105,7 +105,7 @@
 			}
 			
 			//Teraz trzeba wybrać tego pierwszego albo wszystkie startują razem
-			if (Math.random() < 0.75)
+			if (Math.random() < 0.8)
 			{
 				var LosowyIndeks:uint = uint(Math.random() * N);//uint() obcina część ułamkową, a nie zaokragla
 				Kolejny = Slupek(slupki[LosowyIndeks]);

@@ -56,7 +56,7 @@
 			var SHeight:Number = Default_height / 3;
 			
 			Scenka.BackGradientType = GradientType.LINEAR;
-			Model1 = new ModelPierwszy(SWidth - 6, SHeight - 6, 'A:=const*A czyli "Kto pierwszy ten lepszy"');
+			Model1 = new ModelPierwszy(SWidth - 6, SHeight - 6, '[1] A:=const*A czyli "Kto pierwszy ten lepszy"');
 			Model1.Title.textColor = 0x00ffff;
 			Model1.x = 3;
 			Model1.y = 3;
@@ -64,7 +64,7 @@
 			addChild(Model1);
 			
 			Scenka.BackGradientType = GradientType.RADIAL;
-			Model2 = new ModelDrugi(SWidth - 6, SHeight - 6, 'A:=b*A czyli "Lepiej mieć lepsze miejsce"');
+			Model2 = new ModelDrugi(SWidth - 6, SHeight - 6, '[2] A:=b*A czyli "Lepiej mieć lepsze miejsce"');
 			Model2.Title.textColor = 0xffff00;
 			Model2.x = SWidth+3;
 			Model2.y = 3;
@@ -73,48 +73,42 @@
 			addChild(Model2);
 			
 			Scenka.BackColors = [0xFFFFFF, 0x0000FF];//Kolorki inne niż domyślne
-			Model3 = new ModelTrzeci(SWidth-6,SHeight-6,'A:=A*b*c*d czyli "Najlepieć być farciażem"');
+			Model3 = new ModelTrzeci(SWidth-6,SHeight-6,'[3] A:=A*b*c*d czyli "Najlepieć być farciażem"');
 			Model3.x = 3;
 			Model3.y = SHeight + 3;
 			Model3.Sleepable = true;
 			addChild(Model3);
 			
-			Model4 = new ModelCzwarty(SWidth-6,SHeight-6,'Zmienne środowisko czyli "chwytaj okazję"');
+			Model4 = new ModelCzwarty(SWidth-6,SHeight-6,'[4] Zmienne środowisko czyli "chwytaj okazję"');
 			Model4.x = SWidth+3;
 			Model4.y = SHeight+3;
 			addChild(Model4);
 			
 			Scenka.BackColors = [0x005588, 0x0000AA];//Kolorki inne niż domyślne
 			Scenka.BackRatios = [127,255];
-			Model5 = new ModelEvol1(SWidth - 6, SHeight - 6, 'Mikroewolucja - "wygrywają lepsze pomysły"');
+			Model5 = new ModelEvol1(SWidth - 6, SHeight - 6, "[5] Mikroewolucja: 'wygrywają lepsze pomysły'");
 			Model5.Title.textColor = 0x999999;
 			Model5.x = 3;
 			Model5.y = 2 * SHeight + 3;
 			//Model5.KeepRatio = true;
 			addChild(Model5);
 			
-			Model6 = new Scenka(SWidth-6,SHeight-6,'Makroewolucja - ""');
+			Model6 = new ModelEvol2(SWidth - 6, SHeight - 6, //"[6] Makroewolucja: 'inni są twoim zmiennym środowiskiem'"
+															 "[6] Makroewolucja: 'wszystko jest środowiskiem'"
+			);
 			Model6.x = SWidth+3;
 			Model6.y = 2 * SHeight + 3;
-			Model6.KeepRatio = true;
+			//Model6.KeepRatio = true;
 			addChild(Model6);
 			
-			//Testowa zawartość
-			var pom:Number = Model6.height;
-			Model6.addChild(new Slupek(1,pom, 10, 70, 0x000066));
-			Model6.addChild(new Slupek(31,pom, 10, 80, 0x996600));
-			Model6.addChild(new Slupek(61,pom, 10, 90, 0x006699));
-			
 			//Uruchomienie osobnej animacji dla całości - gdyby było potrzebne
-			addEventListener(Event.ENTER_FRAME, timeStep);
+			//addEventListener(Event.ENTER_FRAME, timeStep);
 		}
 		
 		public function timeStep(e:Event):void
 		{
-			//Testowa animacja dla głównego Sprite'a			
-			Slupek(Model6.getChildAt(0)).BarColor ++;
-			//Slupek(Model6.getChildAt(1)).BarHeight *= 1.0005;
-			//Slupek(Model6.getChildAt(2)).BarWidth += 0.05;
+			//Animacja dla głównego Sprite'a			
+			//...
 		}
 	}
 	
